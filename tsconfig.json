@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationDir": "lib",
+    "target": "es5",
+    "removeComments": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "stripInternal": true,
+    "noFallthroughCasesInSwitch": true,
+    "outDir": "lib",
+    "noEmitOnError": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "types": ["node"],
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}
