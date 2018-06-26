@@ -32,12 +32,12 @@ export class {{name}}Request implements APIRequest<{{#ifEmpty response.propertie
   constructor(
     {{~#each pathParameter.properties~}}{{normalizeCase @key}}: {{type}}{{#unless @last}},{{/unless}}{{/each~}}
     {{~#if bodyParameter}}
-    {{~#ifEmpty pathParameter.properties}}{{else}} ,{{/ifEmpty~}}
+    {{~#ifEmpty pathParameter.properties}}{{else}}, {{/ifEmpty~}}
     public bodyParameter: {{bodyParameter.type}}
     {{~/if~}}
     {{~#ifEmpty queryParameter.properties ~}}
     {{~else~}}
-    {{~#ifEmpty pathParameter.properties}}{{else}} ,{{/ifEmpty~}}
+    {{~#ifEmpty pathParameter.properties}}{{else}}, {{/ifEmpty~}}
     public queryParameter: {{name}}Request.Parameter
     {{~/ifEmpty~}}
   ) {
