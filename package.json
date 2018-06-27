@@ -1,7 +1,7 @@
 {
   "name": "swagger-ts-gen",
-  "types": "./lib/TSCodeGenerator.d.ts",
-  "main": "./lib/TSCodeGenerator.js",
+  "types": "./lib/TSgenerator.d.ts",
+  "main": "./lib/TSgenerator.js",
   "version": "0.2.1",
   "description": "The generator for Swagger schema",
   "scripts": {
@@ -32,11 +32,11 @@
     "swagger-ts-gen": "bin/swagger-ts-gen.js"
   },
   "bugs": {
-    "url": "https://github.com/mtennoe/swagger-ts-codegen/issues"
+    "url": "https://github.com/sue71/swagger-ts-gen/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/mtennoe/swagger-ts-codegen.git"
+    "url": "git://github.com/mtennoe/swagger-ts-gen.git"
   },
   "keywords": [
     "swagger",
@@ -47,7 +47,7 @@
     "email": "s.masaki07@gmail.com"
   },
   "license": "MIT",
-  "homepage": "https://github.com/mtennoe/swagger-ts-codegen",
+  "homepage": "https://github.com/mtennoe/swagger-ts-gen",
   "dependencies": {
     "@types/mocha": "^5.2.3",
     "commander": "^2.15.1"
