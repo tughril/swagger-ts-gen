@@ -49,7 +49,6 @@
   "license": "MIT",
   "homepage": "https://github.com/mtennoe/swagger-ts-gen",
   "dependencies": {
-    "@types/mocha": "^5.2.3",
     "commander": "^2.15.1",
     "handlebars": "^4.0.11"
   },
@@ -58,6 +57,7 @@
     "@types/handlebars": "^4.0.38",
     "@types/mustache": "^0.8.30",
     "@types/node": "^10.3.3",
+    "@types/mocha": "^5.2.3",
     "@types/swagger-schema-official": "^2.0.10",
     "mocha": "^5.2.0",
     "nyc": "^12.0.2",
