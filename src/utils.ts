@@ -11,7 +11,7 @@ import { TSSchema, SwaggerSchemaType, SwaggerSchemaFormat } from "./types";
 
 // Map swagger types to typescript definitions
 // [swagger-type:typescript-type]
-export const typeMap: { [key: string]: string } = {
+export const typeMap: Record<SwaggerSchemaType, string> = {
   Array: "Array",
   array: "Array",
   List: "Array",
@@ -36,39 +36,12 @@ export const typeMap: { [key: string]: string } = {
   Error: "Error" // TODO: Error is not same as the Javascript Error
 };
 
-// Map swagger types to typescript definitions
-// [swagger-type:typescript-type]
-export const formatMap: Record<SwaggerSchemaType, string> = {
-  Array: "Array",
-  array: "Array",
-  List: "Array",
-  boolean: "boolean",
-  string: "string",
-  int64: "number",
-  float: "number",
-  number: "number",
-  long: "number",
-  short: "number",
-  char: "string",
-  double: "number",
-  object: "any",
-  integer: "number",
-  Map: "any",
-  date: "string",
-  DateTime: "Date",
-  binary: "string", // TODO: binary should be mapped to byte array
-  ByteArray: "string",
-  UUID: "string",
-  File: "any",
-  Error: "Error" // TODO: Error is not same as the Javascript Error
-};
-
 export function mapType(type?: SwaggerSchemaType, format?: SwaggerSchemaFormat): string {
   if (!type) {
     return "any";
   }
 
-  if (type === "string" && format === "int64") {
+  if (type === "string" && (format === "int64" || format === "uint64")) {
     // TODO: use options
     return "number";
   }

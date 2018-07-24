@@ -9,7 +9,7 @@
     "example": "./node_modules/.bin/ts-node ./src/bin/cli.ts generate examples/petstore.json",
     "test": "mocha --recursive --require ts-node/register \"test/**/*.ts\"",
     "build": "npm run clean && ./node_modules/.bin/tsc",
-    "patch": "npm run build && npm version patch && npm publish"
+    "patch": "npm test && npm run build && npm version patch && npm publish"
   },
   "nyc": {
     "include": [
@@ -56,9 +56,9 @@
   "devDependencies": {
     "@types/assert": "0.0.31",
     "@types/handlebars": "^4.0.38",
+    "@types/mocha": "^5.2.3",
     "@types/mustache": "^0.8.30",
     "@types/node": "^10.3.3",
-    "@types/mocha": "^5.2.3",
     "@types/swagger-schema-official": "^2.0.10",
     "mocha": "^5.2.0",
     "nyc": "^12.0.2",

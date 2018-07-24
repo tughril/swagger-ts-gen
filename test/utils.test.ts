@@ -1,5 +1,6 @@
 import * as assert from "assert";
-import { snakeToCamel, camelToSnake } from '../src/utils';
+import { snakeToCamel, camelToSnake } from "../src/utils";
+import { SwaggerSchemaType } from "../src/types";
 
 import {
   getRefName,
@@ -17,12 +18,19 @@ describe("utils", () => {
   describe("#mapType", () => {
     it("Should map types", () => {
       Object.keys(typeMap).forEach(key => {
-        assert(mapType(key) === typeMap[key]);
+        assert(mapType(key as SwaggerSchemaType) === typeMap[key as SwaggerSchemaType]);
       });
     });
 
     it("Should return any by default", () => {
-      assert(mapType("") === "any");
+      assert(mapType("" as SwaggerSchemaType) === "any");
+    });
+
+    context("format is int64", () => {
+      it("Should return number", () => {
+        assert(mapType("string", "int64") === "number");
+        assert(mapType("string", "uint64") === "number");
+      });
     });
   });
 
@@ -70,5 +78,4 @@ describe("utils", () => {
       assert(camelToSnake("snakeCase") === "snake_case");
     });
   });
-
 });

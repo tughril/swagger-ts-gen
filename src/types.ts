@@ -37,6 +37,7 @@ export interface GenCodeRequest {
 export type SwaggerSchemaFormat =
   | "int32"
   | "int64"
+  | "uint64"
   | "float"
   | "double"
   | "byte"
@@ -49,7 +50,7 @@ export type SwaggerSchemaType =
   | "List"
   | "boolean"
   | "string"
-  | "int64"
+  | "int"
   | "float"
   | "number"
   | "long"
