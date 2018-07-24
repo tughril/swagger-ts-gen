@@ -1,11 +1,11 @@
-import TSCodeGenerator from '../src/TSCodeGenerator';
+import Generator from '../src/Generator';
 import * as assert from 'assert';
 
 const spec = require("../examples/petstore.json");
 
 describe("utils", () => {
 
-    const generator = new TSCodeGenerator(
+    const generator = new Generator(
         spec,
         {
             dist: "."

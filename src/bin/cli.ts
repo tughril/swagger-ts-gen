@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as process from "process";
 import * as commander from "commander";
 import * as path from "path";
-import TSCodeGenerator from "../TSCodeGenerator";
+import Generator from "../Generator";
 
 const pkg = require("../../package.json");
 
@@ -17,7 +17,7 @@ commander
   .action((file, options) => {
     try {
       const content = fs.readFileSync(file, "utf-8");
-      const generator = new TSCodeGenerator(JSON.parse(content), {
+      const generator = new Generator(JSON.parse(content), {
         dist: path.resolve(process.cwd(), options.dist || "./dist"),
         camelCase: !!options.camelCase,
         operationDir: options.operationDir || "requests",

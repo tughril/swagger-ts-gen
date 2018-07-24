@@ -38,12 +38,12 @@ export interface CodeGenOptions {
 }
 
 /**
- * CodeGenerator is generator for typescript
+ * Generator is code generator for typescript
  *
  * TODO: Handle security schema
  * TODO: Handle shared parameter
  */
-export default class TSCodeGenerator {
+export default class Generator {
   operationsDir: string;
   definitionDir: string;
 
