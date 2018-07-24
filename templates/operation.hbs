@@ -48,13 +48,13 @@ export class {{name}}Request implements APIRequest<{{#ifEmpty response.propertie
 }
 
 namespace {{name}}Request {
-{{#if bodyParameter.properties}}
+{{#ifEmpty bodyParameter.properties}}
   export interface Body {
     {{#each bodyParameter.properties}}
     {{> property}}
     {{/each}}
   }
-{{/if}}
+{{/ifEmpty}}
 {{#ifEmpty queryParameter.properties}}
 {{else}}
   export interface Parameter {
