@@ -117,6 +117,10 @@
         },
         "tag": {
           "type": "string"
+        },
+        "weight": {
+          "type": "string",
+          "format": "int64"
         }
       }
     },

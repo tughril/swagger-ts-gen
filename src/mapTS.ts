@@ -1,6 +1,6 @@
 import { Schema, BaseSchema } from "swagger-schema-official";
 import { getRefName, isSchema, isRequired, mapType } from "./utils";
-import { TSSchema } from "./types";
+import { TSSchema, SwaggerSchemaType, SwaggerSchemaFormat } from "./types";
 
 /**
  * Map swagger types to TypeScript types
@@ -9,7 +9,7 @@ import { TSSchema } from "./types";
  */
 export default function mapTS(schema: Schema | BaseSchema, required: boolean = false) {
   const tsSchema: TSSchema = {
-    type: mapType(schema.type),
+    type: mapType(schema.type as SwaggerSchemaType, schema.format as SwaggerSchemaFormat),
     isRequired: required,
     isArray: false,
     isRef: false,
