@@ -4,7 +4,7 @@
 
 import { HTTPMethod, APIRequest } from "../APIRequest";
 {{#if response.isRef}}
-import {{response.type}} from "../{{definitionDir}}/{{response.type}}"
+import {{response.type}} from "../{{definitionDir}}/{{response.type}}";
 {{/if}}
 {{#each response.properties}}
 {{#if isRef}}
@@ -12,18 +12,18 @@ import {{type}} from "../{{definitionDir}}/{{type}}"
 {{/if}}
 {{/each}}
 {{#if bodyParameter.isRef}}
-import {{bodyParameter.type}} from "../{{definitionDir}}/{{bodyParameter.type}}"
+import {{bodyParameter.type}} from "../{{definitionDir}}/{{bodyParameter.type}}";
 {{/if}}
 {{#each bodyParameter.properties}}
 {{#if isRef}}
-import {{type}} from "../{{definitionDir}}/{{type}}"
+import {{type}} from "../{{definitionDir}}/{{type}}";
 {{/if}}
 {{/each}}
 
 export class {{name}}Request implements APIRequest<{{#ifEmpty response.properties}}{{response.type}}{{else}}{{name}}Request.Response{{/ifEmpty}}> {
   path: string = "{{{path}}}";
   {{#if response}}
-  response: {{#ifEmpty response.properties}}{{response.type}}{{else}}{{name}}Request.Response{{/ifEmpty}}
+  response: {{#ifEmpty response.properties}}{{response.type}}{{else}}{{name}}Request.Response{{/ifEmpty}};
   {{else}}
   response: void;
   {{/if}}
