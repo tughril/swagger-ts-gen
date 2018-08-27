@@ -135,7 +135,7 @@
       "enum": ["test1", "test2"]
     },
     "Error": {
-      "required": ["code", "message"],
+      "required": ["error_code", "message"],
       "properties": {
         "error_code": {
           "type": "integer",
