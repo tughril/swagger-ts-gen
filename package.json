@@ -1,7 +1,7 @@
 {
   "name": "swagger-ts-gen",
-  "types": "./lib/TSgenerator.d.ts",
-  "main": "./lib/TSgenerator.js",
+  "types": "./lib/Generator.d.ts",
+  "main": "./lib/Generator.js",
   "version": "0.2.6",
   "description": "The generator for Swagger schema",
   "scripts": {

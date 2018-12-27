@@ -12,7 +12,7 @@ npm install -D swagger-ts-gen
 
 ```ts
 
-import { CodeGenerator } from "swagger-ts-gen";
+import { Generator } from "swagger-ts-gen";
 
 const content = fs.readFileSync("path to swagger", "utf-8");
 const generator = new CodeGenerator(JSON.parse(content), {
