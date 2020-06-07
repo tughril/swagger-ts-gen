@@ -8,7 +8,6 @@ import {
   Response,
   Parameter,
   PathParameter,
-  QueryParameter,
   BodyParameter
 } from "swagger-schema-official";
 import {
@@ -48,8 +47,8 @@ export default class Generator {
   definitionDir: string;
 
   constructor(private spec: Spec, private options: CodeGenOptions) {
-    this.operationsDir = options.operationDir || "requests";
-    this.definitionDir = options.definitionDir || "models";
+    this.operationsDir = options.operationDir || "operations";
+    this.definitionDir = options.definitionDir || "definitions";
   }
 
   generate() {
@@ -76,6 +75,9 @@ export default class Generator {
     // Setup output directory
     const operationDir = path.resolve(this.dist, this.operationsDir);
     const definitionDir = path.resolve(this.dist, this.definitionDir);
+    if (!fs.existsSync(this.dist)) {
+      fs.mkdirSync(this.dist);
+    }
     if (data.operations.length > 0 && !fs.existsSync(operationDir)) {
       fs.mkdirSync(operationDir);
     }
@@ -85,7 +87,7 @@ export default class Generator {
 
     // Create files and write schema
     this.genFiles([
-      ...this.createInterfaces(),
+      ...this.createLibs(),
       ...this.createDefinitions(
         data.definitions,
         Handlebars.compile(definitionTmpl),
@@ -107,14 +109,14 @@ export default class Generator {
     });
 
     // Parse operations
-    const operations = Object.keys(this.spec.paths).reduce((result, path) => {
+    const operations = Object.keys(this.spec.paths).reduce((result: any, path) => {
       let content: Path = this.spec.paths[path];
 
       // Remove parameters
       delete content.parameters;
 
       // Loop for Operation
-      const operations = Object.keys(content).reduce((result, m) => {
+      const operations = Object.keys(content).reduce((result: any, m) => {
         let method = m.toUpperCase() as HTTPMethod;
         let operation: Operation = (content as any)[m] as Operation;
 
@@ -185,7 +187,7 @@ export default class Generator {
     // Parse query parameters
     return (parameters || [])
       .filter(v => isQueryParameter(v))
-      .reduce((res: TSSchema, v: QueryParameter) => {
+      .reduce((res: TSSchema, v) => {
         res.properties[v.name] = mapTS(v, v.required);
         return res;
       }, emptySchema());
@@ -219,11 +221,11 @@ export default class Generator {
   /**
    * Create emmbedded interfaces
    */
-  private createInterfaces(): GenCodeRequest[] {
+  private createLibs(): GenCodeRequest[] {
     return [
       {
-        filepath: path.resolve(this.dist, `APIRequest.ts`),
-        content: this.embedded("api-request")({})
+        filepath: path.resolve(this.dist, `lib.ts`),
+        content: this.embedded("lib")({})
       }
     ];
   }
@@ -275,7 +277,7 @@ export default class Generator {
    * Register handlebars helpers
    */
   private registerHelper() {
-    Handlebars.registerHelper("normalizeCase", (text, _) => {
+    Handlebars.registerHelper("normalizeCase", (text: string) => {
       if (this.options.camelCase === true) {
         return snakeToCamel(text);
       }
@@ -284,7 +286,7 @@ export default class Generator {
       }
       return text;
     });
-    Handlebars.registerHelper("ifEmpty", function(conditional, options) {
+    Handlebars.registerHelper("ifEmpty", function(this: any, conditional: any, options: any) {
       if (typeof conditional === "object" && Object.keys(conditional).length === 0) {
         return options.fn(this);
       } else {
