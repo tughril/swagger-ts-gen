@@ -1,5 +1,6 @@
+import { Operation } from 'swagger-schema-official';
 import * as assert from "assert";
-import { snakeToCamel, camelToSnake } from "../src/utils";
+import { snakeToCamel, camelToSnake, toUpperCamelCase, createOperationName } from "../src/utils";
 import { SwaggerSchemaType } from "../src/types";
 
 import {
@@ -64,6 +65,25 @@ describe("utils", () => {
     });
     it("Should return false", () => {
       assert(isQueryParameter(parameter("body")) === false);
+    });
+  });
+
+  describe("#createOperationName", () => {
+    it("Should create name from operation", () => {
+      assert.equal(createOperationName({ operationId: "operationName" } as Operation, "/pets/{petId}", "GET"), "OperationName");
+    });
+    it("Should create name from path and method", () => {
+      assert.equal(createOperationName({} as Operation, "/pets/{petId}", "GET"), "GetPetsPetId");
+    });
+  });
+
+
+  describe("#toUpperCamelCase", () => {
+    it("Should return upper camelCase", () => {
+      assert(toUpperCamelCase("camel_case") === "CamelCase");
+    });
+    it("Should return upper camelCase", () => {
+      assert(toUpperCamelCase("camelCase") === "CamelCase");
     });
   });
 

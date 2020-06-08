@@ -1,4 +1,4 @@
-export type HTTPMethod = "GET" | "PUT" | "POST" | "DELETE" | "OPTIONS" | "HEAD" | "PATCH";
+export type HTTPMethod = "GET" | "PUT" | "POST" | "DELETE" | "OPTIONS" | "HEAD" | "PATCH" | "get" | "put" | "post" | "delete" | "options" | "head" | "patch";
 
 export interface TSSchema {
   type: string;

@@ -109,13 +109,26 @@ export function isSchema(
 }
 
 /**
+ * Normalize path string
+ * @param path 
+ */
+export function normalizePath(path: string): string {
+  if (path.charAt(0) === "/") {
+    return path;
+  }
+  return `/${path.slice(1)}`;
+}
+ 
+/**
  * Create operation name
  * @param method
  * @param operation
  */
-export function createOperationName(method: string, operation: Operation): string {
-  // TODO: create operation name
-  return operation.operationId || method;
+export function createOperationName(operation: Operation, path: string, method: string): string {
+  if (operation.operationId) {
+    return toUpperCamelCase(operation.operationId);
+  }
+  return toUpperCamelCase(`${method.toLowerCase()}${normalizePath(path).replace(/\//g, "_").replace(/\{|\}/g, "")}`);
 }
 
 /**
@@ -131,6 +144,16 @@ export function emptySchema(): TSSchema {
     enum: []
   };
 }
+
+/**
+ * snake to camel case
+ * @param str
+ */
+export function toUpperCamelCase(str: string) {
+  const camelCase = snakeToCamel(str);
+  return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
+}
+
 
 /**
  * snake to camel case

@@ -25,11 +25,7 @@ export interface {{name}}List {
   {{/if}}
 {{else}}
   {{#if schema.enum}}
-enum {{name}} {
-  {{#each schema.enum}}
-  {{this}} = "{{this}}"{{#unless @last}},{{/unless}}
-  {{/each}}
-}
+type {{name}} = {{#each schema.enum}}"{{this}}"{{#unless @last}}|{{/unless}}{{/each}}
 export default {{name}}
   {{else}}
 export default interface {{name}} {
