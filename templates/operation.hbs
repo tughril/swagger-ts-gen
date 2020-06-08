@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { HTTPMethod, APIRequest } from "../APIRequest";
+import { HTTPMethod, APIRequest } from "swagger-ts-gen";
 {{#if response.isRef}}
 import {{response.type}} from "../{{definitionDir}}/{{response.type}}";
 {{/if}}
@@ -27,7 +27,7 @@ export class {{name}}Request implements APIRequest<{{#ifEmpty response.propertie
   {{else}}
   response: void;
   {{/if}}
-  method: HTTPMethod = HTTPMethod.{{method}};
+  method: HTTPMethod = "{{method}}";
 
   constructor(
     {{~#each pathParameter.properties~}}{{normalizeCase @key}}: {{type}}{{#unless @last}},{{/unless}}{{/each~}}

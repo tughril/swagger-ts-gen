@@ -1,4 +1,4 @@
-import Generator from "../src/Generator";
+import { Generator } from "../src/generator";
 import * as assert from "assert";
 
 const spec = require("../examples/petstore.json");
@@ -42,14 +42,6 @@ describe("utils", () => {
           },
           tag: {
             type: "string",
-            isRef: false,
-            isRequired: false,
-            isArray: false,
-            enum: [],
-            properties: {}
-          },
-          weight: {
-            type: "number",
             isRef: false,
             isRequired: false,
             isArray: false,

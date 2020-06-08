@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as process from "process";
 import * as commander from "commander";
 import * as path from "path";
-import Generator from "../Generator";
+import { Generator } from "../generator";
 
 const pkg = require("../../package.json");
 
@@ -20,8 +20,8 @@ commander
       const generator = new Generator(JSON.parse(content), {
         dist: path.resolve(process.cwd(), options.dist || "./dist"),
         camelCase: !!options.camelCase,
-        operationDir: options.operationDir || "requests",
-        definitionDir: options.definitionDir || "models"
+        operationDir: options.operationDir || "operations",
+        definitionDir: options.definitionDir || "definitions"
       });
       generator.generate();
     } catch (e) {

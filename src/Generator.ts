@@ -8,7 +8,6 @@ import {
   Response,
   Parameter,
   PathParameter,
-  QueryParameter,
   BodyParameter
 } from "swagger-schema-official";
 import {
@@ -20,7 +19,7 @@ import {
   snakeToCamel
 } from "./utils";
 import { HTTPMethod, OperationSchema, GenCodeRequest, DefinitionSchema, TSSchema } from "./types";
-import mapTS from "./mapTS";
+import mapTS from "./map-ts";
 import { camelToSnake } from "./utils";
 
 /**
@@ -43,13 +42,13 @@ export interface CodeGenOptions {
  * TODO: Handle security schema
  * TODO: Handle shared parameter
  */
-export default class Generator {
+export class Generator {
   operationsDir: string;
   definitionDir: string;
 
   constructor(private spec: Spec, private options: CodeGenOptions) {
-    this.operationsDir = options.operationDir || "requests";
-    this.definitionDir = options.definitionDir || "models";
+    this.operationsDir = options.operationDir || "operations";
+    this.definitionDir = options.definitionDir || "definitions";
   }
 
   generate() {
@@ -76,6 +75,9 @@ export default class Generator {
     // Setup output directory
     const operationDir = path.resolve(this.dist, this.operationsDir);
     const definitionDir = path.resolve(this.dist, this.definitionDir);
+    if (!fs.existsSync(this.dist)) {
+      fs.mkdirSync(this.dist);
+    }
     if (data.operations.length > 0 && !fs.existsSync(operationDir)) {
       fs.mkdirSync(operationDir);
     }
@@ -85,7 +87,6 @@ export default class Generator {
 
     // Create files and write schema
     this.genFiles([
-      ...this.createInterfaces(),
       ...this.createDefinitions(
         data.definitions,
         Handlebars.compile(definitionTmpl),
@@ -114,7 +115,7 @@ export default class Generator {
       delete content.parameters;
 
       // Loop for Operation
-      const operations = Object.keys(content).reduce((result, m) => {
+      const operations = Object.keys(content).reduce((result: any, m) => {
         let method = m.toUpperCase() as HTTPMethod;
         let operation: Operation = (content as any)[m] as Operation;
 
@@ -126,7 +127,7 @@ export default class Generator {
 
         // Create request
         const operationSchema: OperationSchema = {
-          name: operation.operationId || createOperationName(method, operation),
+          name: createOperationName(operation, path, method),
           path: path,
           method: method,
           response: emptySchema()
@@ -142,7 +143,7 @@ export default class Generator {
       }, []);
 
       return [...result, ...operations];
-    }, []);
+    }, [] as OperationSchema[]);
 
     return {
       operations: operations,
@@ -185,7 +186,7 @@ export default class Generator {
     // Parse query parameters
     return (parameters || [])
       .filter(v => isQueryParameter(v))
-      .reduce((res: TSSchema, v: QueryParameter) => {
+      .reduce((res: TSSchema, v) => {
         res.properties[v.name] = mapTS(v, v.required);
         return res;
       }, emptySchema());
@@ -214,18 +215,6 @@ export default class Generator {
         flag: "w+"
       });
     });
-  }
-
-  /**
-   * Create emmbedded interfaces
-   */
-  private createInterfaces(): GenCodeRequest[] {
-    return [
-      {
-        filepath: path.resolve(this.dist, `APIRequest.ts`),
-        content: this.embedded("api-request")({})
-      }
-    ];
   }
 
   /**
@@ -275,7 +264,7 @@ export default class Generator {
    * Register handlebars helpers
    */
   private registerHelper() {
-    Handlebars.registerHelper("normalizeCase", (text, _) => {
+    Handlebars.registerHelper("normalizeCase", (text: string) => {
       if (this.options.camelCase === true) {
         return snakeToCamel(text);
       }
@@ -284,7 +273,7 @@ export default class Generator {
       }
       return text;
     });
-    Handlebars.registerHelper("ifEmpty", function(conditional, options) {
+    Handlebars.registerHelper("ifEmpty", function(this: any, conditional: any, options: any) {
       if (typeof conditional === "object" && Object.keys(conditional).length === 0) {
         return options.fn(this);
       } else {

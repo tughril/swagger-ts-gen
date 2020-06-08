@@ -9,15 +9,23 @@
   },
   "host": "petstore.swagger.io",
   "basePath": "/v1",
-  "schemes": ["http"],
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
   "paths": {
     "/pets": {
       "get": {
         "summary": "List all pets",
-        "operationId": "ListPets",
-        "tags": ["pets"],
+        "operationId": "listPets",
+        "tags": [
+          "pets"
+        ],
         "parameters": [
           {
             "name": "limit",
@@ -31,6 +39,12 @@
         "responses": {
           "200": {
             "description": "An paged array of pets",
+            "headers": {
+              "x-next": {
+                "type": "string",
+                "description": "A link to the next page of responses"
+              }
+            },
             "schema": {
               "$ref": "#/definitions/Pets"
             }
@@ -43,32 +57,20 @@
           }
         }
       },
-      "put": {
-        "summary": "update a pet",
-        "operationid": "UpdatePet",
-        "tags": ["pets"],
-        "parameter": {
-          "in": "body",
-          "schema": {
-            "$ref": "#definitions/Pet"
-          }
-        },
-        "responses": {
-          "200": {
-            "schema": {
-              "$ref": "#/definitions/Pet"
-            }
-          }
-        }
-      },
       "post": {
-        "summary": "create a pet",
-        "operationid": "CreatePet",
-        "tags": ["pets"],
+        "summary": "Create a pet",
+        "operationId": "createPets",
+        "tags": [
+          "pets"
+        ],
         "responses": {
-          "200": {
+          "201": {
+            "description": "Null response"
+          },
+          "default": {
+            "description": "unexpected error",
             "schema": {
-              "$ref": "#/definitions/Pet"
+              "$ref": "#/definitions/Error"
             }
           }
         }
@@ -77,8 +79,10 @@
     "/pets/{petId}": {
       "get": {
         "summary": "Info for a specific pet",
-        "operationId": "ShowPetById",
-        "tags": ["pets"],
+        "operationId": "showPetById",
+        "tags": [
+          "pets"
+        ],
         "parameters": [
           {
             "name": "petId",
@@ -107,20 +111,20 @@
   },
   "definitions": {
     "Pet": {
-      "required": ["id", "name"],
+      "required": [
+        "id",
+        "name"
+      ],
       "properties": {
         "id": {
-          "type": "integer"
+          "type": "integer",
+          "format": "int64"
         },
         "name": {
           "type": "string"
         },
         "tag": {
           "type": "string"
-        },
-        "weight": {
-          "type": "string",
-          "format": "int64"
         }
       }
     },
@@ -130,14 +134,13 @@
         "$ref": "#/definitions/Pet"
       }
     },
-    "Status": {
-      "type": "string",
-      "enum": ["test1", "test2"]
-    },
     "Error": {
-      "required": ["error_code", "message"],
+      "required": [
+        "code",
+        "message"
+      ],
       "properties": {
-        "error_code": {
+        "code": {
           "type": "integer",
           "format": "int32"
         },
