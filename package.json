@@ -2,7 +2,7 @@
   "name": "swagger-ts-gen",
   "types": "./lib/index",
   "main": "./lib/index",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "The generator for swagger schema",
   "scripts": {
     "clean": "rm -rf ./lib",
