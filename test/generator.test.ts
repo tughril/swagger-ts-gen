@@ -3,8 +3,11 @@ import * as assert from "assert";
 
 const spec = require("../examples/petstore.json");
 
-describe("utils", () => {
+describe("Generator", () => {
   const generator = new Generator(spec, {
+    modelPropertyNaming: "camelCase",
+    definitionDir: "definitions",
+    operationDir: "operations",
     dist: "."
   });
 
@@ -22,12 +25,14 @@ describe("utils", () => {
         isRef: false,
         isRequired: false,
         isArray: false,
+        isNullable: false,
         enum: [],
         properties: {
           id: {
             type: "number",
             isRef: false,
             isRequired: true,
+            isNullable: false,
             isArray: false,
             enum: [],
             properties: {}
@@ -35,6 +40,7 @@ describe("utils", () => {
           name: {
             type: "string",
             isRef: false,
+            isNullable: false,
             isRequired: true,
             isArray: false,
             enum: [],
@@ -43,6 +49,7 @@ describe("utils", () => {
           tag: {
             type: "string",
             isRef: false,
+            isNullable: true,
             isRequired: false,
             isArray: false,
             enum: [],
