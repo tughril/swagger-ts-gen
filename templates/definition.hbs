@@ -23,13 +23,18 @@ export interface {{name}}List {
     {{/if}}
   {{/if}}
 {{else}}
-  {{#if schema.enum}}
+{{#if schema.enum}}
 export type {{name}} = {{#each schema.enum}}"{{this}}"{{#unless @last}}|{{/unless}}{{/each}}
-  {{else}}
+{{/if}}
+{{#ifEmpty schema.properties}}
+{{#if schema.type}}
+export type {{name}} = {{schema.type}};
+{{/if}}
+{{else}}
 export interface {{name}} {
   {{#each schema.properties}}
   {{> property}}
   {{/each}}
 }
-  {{/if}}
+{{/ifEmpty}}
 {{/if}}

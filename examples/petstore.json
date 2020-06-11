@@ -151,7 +151,7 @@
           "format": "int64"
         },
         "name": {
-          "type": "string"
+          "$ref": "#/definitions/Name"
         },
         "tag": {
           "x-nullable": true,
@@ -165,7 +165,7 @@
         "$ref": "#/definitions/Pet"
       }
     },
-    "Email": {
+    "Name": {
       "type": "string",
       "format": "xxx"
     },

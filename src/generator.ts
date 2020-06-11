@@ -14,7 +14,6 @@ import {
   isQueryParameter,
   createOperationName,
   emptySchema,
-  isModel, 
   isFormDataParameter, 
   normalizeNaming 
 } from "./utils";
@@ -112,12 +111,10 @@ export class Generator {
    */
   parseSpec() {
     const specDefinitions = this.spec.definitions || {}
-    const definitions: DefinitionSchema[] = Object.keys(specDefinitions)
-    .filter(key => isModel(specDefinitions[key]))
-    .map(key => {
+    const definitions: DefinitionSchema[] = Object.keys(specDefinitions).map((key) => {
       return {
         name: key,
-        schema: mapTS(specDefinitions[key])
+        schema: mapTS(specDefinitions[key]),
       };
     });
 
