@@ -6,7 +6,7 @@
   "description": "The generator for swagger schema",
   "scripts": {
     "clean": "rm -rf ./lib",
-    "example": "./node_modules/.bin/ts-node ./src/bin/cli.ts generate examples/petstore.json",
+    "example": "./node_modules/.bin/ts-node ./src/bin/cli.ts generate examples/petstore.json --model-property-naming original",
     "test": "mocha --recursive --require ts-node/register \"test/**/*.ts\"",
     "build": "npm run clean && ./node_modules/.bin/tsc",
     "patch": "npm test && npm run build && npm version patch && npm publish",

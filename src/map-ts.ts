@@ -1,5 +1,5 @@
 import { Schema, BaseSchema } from "swagger-schema-official";
-import { getRefName, isSchema, isRequired, mapType } from "./utils";
+import { getRefName, isSchema, isRequired, mapType, isNullable } from './utils';
 import { TSSchema, SwaggerSchemaType, SwaggerSchemaFormat } from "./types";
 
 /**
@@ -13,6 +13,7 @@ export default function mapTS(schema: Schema | BaseSchema, required: boolean = f
     isRequired: required,
     isArray: false,
     isRef: false,
+    isNullable: isNullable(schema),
     enum: [],
     properties: {}
   };

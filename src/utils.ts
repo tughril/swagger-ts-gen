@@ -5,9 +5,10 @@ import {
   Parameter,
   PathParameter,
   QueryParameter,
-  Schema as SwaggerSchema
+  Schema as SwaggerSchema,
+  FormDataParameter
 } from "swagger-schema-official";
-import { TSSchema, SwaggerSchemaType, SwaggerSchemaFormat } from "./types";
+import { TSSchema, SwaggerSchemaType, SwaggerSchemaFormat, ProeprtyNaming } from './types';
 
 // Map swagger types to typescript definitions
 // [swagger-type:typescript-type]
@@ -56,6 +57,29 @@ export function mapType(type?: SwaggerSchemaType, format?: SwaggerSchemaFormat):
 export function getRefName(ref: string): string {
   const seguments = ref.split("/");
   return seguments[seguments.length - 1];
+}
+
+/**
+ * Check schema is model
+ * @param schema 
+ */
+export function isModel(schema: SwaggerSchema): boolean {
+  return !!schema.properties || !!(schema.items as SwaggerSchema)?.$ref
+}
+
+/**
+ * Check schema is nullable
+ * @param schema 
+ */
+export function isNullable(schema: SwaggerSchema): boolean {
+  return (schema as any)["x-nullable"];
+}
+
+/**
+ * Check type is FormDataParameter with type guard
+ */
+export function isFormDataParameter(parameter: Parameter): parameter is FormDataParameter {
+  return parameter.in === "formData";
 }
 
 /**
@@ -139,10 +163,26 @@ export function emptySchema(): TSSchema {
     type: "void",
     isRequired: false,
     isRef: false,
+    isNullable: false,
     isArray: false,
     properties: {},
     enum: []
   };
+}
+
+/**
+ * normalize naming
+ * @param str 
+ */
+export function normalizeNaming(str: string, naming: ProeprtyNaming): string {
+  switch (naming) {
+    case "camelCase":
+      return snakeToCamel(str);
+    case "snake_case":
+      return camelToSnake(str);
+    case "original":
+      return str;
+  }
 }
 
 /**

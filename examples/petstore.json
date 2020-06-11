@@ -19,6 +19,26 @@
     "application/json"
   ],
   "paths": {
+    "/form": {
+      "post": {
+        "summary": "Issue token",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "formData",
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "formData",
+            "type": "string"
+          }
+        ]
+      }
+    },
     "/pets": {
       "get": {
         "summary": "List all pets",
@@ -62,6 +82,16 @@
         "operationId": "createPets",
         "tags": [
           "pets"
+        ],
+        "parameters": [
+          {
+            "name": "pet",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Pet"
+            }
+          }
         ],
         "responses": {
           "201": {
@@ -124,6 +154,7 @@
           "type": "string"
         },
         "tag": {
+          "x-nullable": false,
           "type": "string"
         }
       }
@@ -133,6 +164,10 @@
       "items": {
         "$ref": "#/definitions/Pet"
       }
+    },
+    "Email": {
+      "type": "string",
+      "format": "xxx"
     },
     "Error": {
       "required": [
