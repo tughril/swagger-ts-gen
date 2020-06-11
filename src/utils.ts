@@ -60,14 +60,6 @@ export function getRefName(ref: string): string {
 }
 
 /**
- * Check schema is model
- * @param schema 
- */
-export function isModel(schema: SwaggerSchema): boolean {
-  return !!schema.properties || !!(schema.items as SwaggerSchema)?.$ref
-}
-
-/**
  * Check schema is nullable
  * @param schema 
  */

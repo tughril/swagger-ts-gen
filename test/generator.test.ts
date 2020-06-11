@@ -38,8 +38,8 @@ describe("Generator", () => {
             properties: {}
           },
           name: {
-            type: "string",
-            isRef: false,
+            type: "Name",
+            isRef: true,
             isNullable: false,
             isRequired: true,
             isArray: false,
