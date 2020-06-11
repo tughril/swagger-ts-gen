@@ -63,6 +63,16 @@
         "tags": [
           "pets"
         ],
+        "parameters": [
+          {
+            "name": "pet",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Pet"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Null response"
