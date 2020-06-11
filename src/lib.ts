@@ -2,8 +2,7 @@ import { HTTPMethod } from './types';
 
 export interface APIRequest<Response> {
   _response?: Response;
-  bodyParameter?: any;
-  queryParameter?: any;
+  parameter?: any;
   path: string;
   method: HTTPMethod;
   contentType?: string;
