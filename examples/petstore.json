@@ -154,7 +154,7 @@
           "type": "string"
         },
         "tag": {
-          "x-nullable": false,
+          "x-nullable": true,
           "type": "string"
         }
       }

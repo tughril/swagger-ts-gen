@@ -72,7 +72,7 @@ export function isModel(schema: SwaggerSchema): boolean {
  * @param schema 
  */
 export function isNullable(schema: SwaggerSchema): boolean {
-  return (schema as any)["x-nullable"];
+  return (schema as any)["x-nullable"] === true;
 }
 
 /**
