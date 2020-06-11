@@ -4,19 +4,19 @@
 
 import { HTTPMethod, APIRequest } from "swagger-ts-gen";
 {{#if response.isRef}}
-import {{response.type}} from "../{{definitionDir}}/{{response.type}}";
+import { {{response.type}} } from "../{{definitionDir}}/{{response.type}}";
 {{/if}}
 {{#each response.properties}}
 {{#if isRef}}
-import {{type}} from "../{{definitionDir}}/{{type}}"
+import { {{type}} } from "../{{definitionDir}}/{{type}}"
 {{/if}}
 {{/each}}
 {{#if bodyParameter.isRef}}
-import {{bodyParameter.type}} from "../{{definitionDir}}/{{bodyParameter.type}}";
+import { {{bodyParameter.type}} } from "../{{definitionDir}}/{{bodyParameter.type}}";
 {{/if}}
 {{#each bodyParameter.properties}}
 {{#if isRef}}
-import {{type}} from "../{{definitionDir}}/{{type}}";
+import { {{type}} } from "../{{definitionDir}}/{{type}}";
 {{/if}}
 {{/each}}
 
@@ -24,21 +24,30 @@ export class {{name}}Request implements APIRequest<{{#ifEmpty response.propertie
   {{#if response}}
   _response?: {{#ifEmpty response.properties}}{{response.type}}{{else}}{{name}}Request.Response{{/ifEmpty}};
   {{else}}
-  response: void;
+  _response: void;
   {{/if}}
   path: string = "{{{path}}}";
   method: HTTPMethod = "{{method}}";
+  {{#if contentType}}
+  contentType = "{{contentType}}";
+  {{/if}}
 
   constructor(
     {{~#each pathParameter.properties~}}{{normalizeCase @key}}: {{type}}{{#unless @last}},{{/unless}}{{/each~}}
+
     {{~#if bodyParameter}}
     {{~#ifEmpty pathParameter.properties}}{{else}}, {{/ifEmpty~}}
-    public bodyParameter: {{bodyParameter.type}}
+    public parameter: {{bodyParameter.type}}
     {{~/if~}}
     {{~#ifEmpty queryParameter.properties ~}}
     {{~else~}}
     {{~#ifEmpty pathParameter.properties}}{{else}}, {{/ifEmpty~}}
-    public queryParameter: {{name}}Request.Parameter
+    public parameter: {{name}}Request.Parameter
+    {{~/ifEmpty~}}
+    {{~#ifEmpty formDataParameter.properties ~}}
+    {{~#ifEmpty pathParameter.properties}}{{else}}, {{/ifEmpty~}}
+    {{~else~}}
+    public parameter: {{name}}Request.Parameter
     {{~/ifEmpty~}}
   ) {
     {{#each pathParameter.properties}}
@@ -48,13 +57,6 @@ export class {{name}}Request implements APIRequest<{{#ifEmpty response.propertie
 }
 
 namespace {{name}}Request {
-{{#ifEmpty bodyParameter.properties}}
-  export interface Body {
-    {{#each bodyParameter.properties}}
-    {{> property}}
-    {{/each}}
-  }
-{{/ifEmpty}}
 {{#ifEmpty queryParameter.properties}}
 {{else}}
   export interface Parameter {
@@ -63,10 +65,10 @@ namespace {{name}}Request {
     {{/each}}
   }
 {{/ifEmpty}}
-{{#ifEmpty response.properties}}
+{{#ifEmpty formDataParameter.properties}}
 {{else}}
-  export interface Response {
-    {{#each response.properties}}
+  export interface Parameter {
+    {{#each formDataParameter.properties}}
     {{> property}}
     {{/each}}
   }

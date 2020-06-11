@@ -1,0 +1,341 @@
+swagger: '2.0'
+info:
+  title: pool
+  version: '1.0'
+host: 'localhost:8509'
+schemes:
+  - https
+produces:
+  - application/json
+consumes:
+  - application/json
+tags:
+  - name: token
+    description: Oauth2のトークン
+  - name: email-verifications
+    description: メール認証
+  - name: phone-number-verifications
+    description: 電話番号認証
+  - name: users
+    description: ユーザ
+paths:
+  /oauth2/token:
+    post:
+      summary: トークン発行
+      tags: [token]
+      operationId: issueToken
+      security: []
+      consumes: 
+        - application/x-www-form-urlencoded
+      parameters:
+        - name: grant_type
+          in: formData
+          type: string
+          enum: [Bearer]
+          required: true
+        - name: username
+          in: formData
+          type: string
+          required: true
+        - name: password
+          in: formData
+          type: string
+          required: true
+        - name: mfa_id
+          in: formData
+          type: string
+      responses:
+        '201':
+          description: Accepted
+          schema:
+            $ref: '#/definitions/OAuth2Token'
+  '/email-verifications/{id}/check':
+    get:
+      summary: メール認証でのコード照合を行う
+      description: アプリのAPIクライアントではなく、メーラーが起動したブラウザが開くエンドポイント。認証メール内にリンクとして埋め込まれている。
+      operationId: checkEmailVerification
+      tags:
+        - email-verifications
+      security: []
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "メール認証のid"
+          required: true
+          type: string
+        - name: "code"
+          in: "query"
+          description: "認証メール内に埋め込まれた認証用コード"
+          required: true
+          type: "string"
+        - name: "redirect_url"
+          in: "query"
+          description: "認証成功時にリダイレクトする先のURL"
+          required: true
+          type: "string"
+          pattern: https?://[\w!?/\+\-_~=;\.,*&@#$%\(\)\'\[\]]+
+      responses:
+        '302':
+          description: 照合成功時
+          headers:
+            Location: 
+              type: string
+              description: 照合成功時の遷移先
+        '307':
+          description: 照合失敗時
+          headers:
+            Location: 
+              type: string
+              description: 照合失敗時の遷移先
+  /phone-number-verifications:
+    post:
+      summary: 電話番号認証を要求する
+      operationId: createPhoneNumberVerification
+      tags:
+        - phone-number-verifications
+      security: []
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema: 
+            $ref: '#/definitions/CreatePhoneNumberVerificationBody'
+      responses:
+        '201':
+          $ref: '#/responses/PhoneNumberVerification'
+  '/phone-number-verifications/{id}/check':
+    post:
+      summary: 電話番号認証でのコード照合を行う
+      operationId: checkPhoneNumberVerification
+      tags:
+        - phone-number-verifications
+      security: []
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "電話番号認証のid"
+          required: true
+          type: "string"
+        - name: "body"
+          in: "body"
+          required: true
+          schema: 
+            $ref: '#/definitions/CheckPhoneNumberVerificationBody'
+      responses:
+        '200':
+          $ref: '#/responses/PhoneNumberVerification'
+  /signup:
+    post:
+      summary: 新規会員登録
+      tags: [users]
+      operationId: signup
+      security: []
+      parameters:
+        - name: body
+          in: "body"
+          required: true
+          schema:
+            $ref: '#/definitions/SingupBody'
+      responses:
+        '202':
+          description: OK
+          schema:
+            type: object
+            properties:
+              token:
+                $ref: '#/definitions/Token'
+  '/users/me':
+    get:
+      summary: 自分のユーザ情報を取得する
+      operationId: showMe
+      tags:
+        - users
+      responses:
+        '200':
+          $ref: '#/responses/User'
+  '/users/me/email':
+    put:
+      summary: 自分のメールアドレスを変更する
+      operationId: changeMyEmail
+      tags:
+        - users
+      parameters:
+        - name: "body"
+          in: "body"
+          required: true
+          schema: 
+            $ref: '#/definitions/ChangeMyEmailBody'
+      responses:
+        '202':
+          $ref: '#/responses/User'
+  '/users/me/phone-number':
+    put:
+      summary: 自分の電話番号を変更する
+      operationId: changeMyPhoneNumber
+      tags:
+        - users
+      parameters:
+        - name: "body"
+          in: "body"
+          required: true
+          schema: 
+            $ref: '#/definitions/ChangeMyPhoneNumberBody'
+      responses:
+        '200':
+          $ref: '#/responses/User'
+responses:
+  User: 
+    description: ユーザ
+    schema:
+      $ref: '#/definitions/User'
+  EmailVerification: 
+    description: メール認証
+    schema:
+      $ref: '#/definitions/EmailVerification'
+  PhoneNumberVerification: 
+    description: 電話番号認証
+    schema:
+      $ref: '#/definitions/PhoneNumberVerification'
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      email:
+        type: string
+      phoneNumber:
+        $ref: '#/definitions/PhoneNumber'
+  OAuth2Token:
+    type: object
+    description: OAuth2の仕様に合わせるため、これのみスネークケースになっている。Tokenと同じ情報を持つ。
+    properties:
+      access_token:
+        type: string
+      token_type:
+        type: string
+        enum: [Bearer]
+      expires_in:
+        type: integer
+  Token:
+    type: object
+    properties:
+      accessToken:
+        type: string
+      tokenType:
+        type: string
+        enum: [Bearer]
+      expiresIn:
+        type: integer
+  EmailVerification:
+    type: object
+    properties:
+      id:
+        type: string
+      expiresIn:
+        type: integer
+      createdAt:
+        type: string
+        format: datetime
+  PhoneNumberVerification:
+    type: object
+    properties:
+      id:
+        type: string
+      status:
+        type: string
+        enum: [requested, verified]
+      expiresIn:
+        type: integer
+      createdAt:
+        type: string
+        format: datetime
+      verifiedAt:
+        type: string
+        format: datetime
+        x-nullable: true
+  SingupBody:
+    type: object
+    required:
+      - email
+      - password
+      - phoneNumber
+      - phoneNumberVerificationID
+    properties:
+      email:
+        $ref: '#/definitions/Email'
+      password:
+        $ref: '#/definitions/Password'
+      phoneNumber:
+        $ref: '#/definitions/PhoneNumber'
+      phoneNumberVerificationID:
+        type: string
+  CreatePhoneNumberVerificationBody:
+        type: object
+        required:
+          - phoneNumber
+        properties:
+          phoneNumber:
+            type: string
+            format: ^0[789]0[0-9]{8}$
+  CheckPhoneNumberVerificationBody:
+    type: object
+    required:
+      - verificationCode
+    properties:
+      verificationCode:
+        type: string
+  CreateEmailVerificationBody:
+    type: object
+    required:
+      - email
+    properties:
+      email:
+        type: string
+        format: email
+  ChangeMyEmailBody:
+    type: object
+    required:
+      - email
+    properties:
+      email:
+        type: string
+        format: email
+  ChangeMyPhoneNumberBody:
+    type: object
+    required:
+      - phoneNumber
+      - phoneNumberVerificationID
+    properties:
+      phoneNumber:
+        $ref: '#/definitions/PhoneNumber'
+      phoneNumberVerificationID:
+        type: string      
+  Email:
+    type: string
+    format: email
+  Password:
+    type: string
+    format: ^[0-9A-Za-z!-~]{8,40}$
+    example: sekai-no-8maki
+  PhoneNumber:
+    type: string
+    format: ^0[789]0[0-9]{8}$
+    example: 08012345678
+basePath: /v1
+securityDefinitions:
+  OAuth2:
+    type: oauth2
+    flow: password
+    tokenUrl: https://localhost:8509/v1/oauth2/token
+    scopes: 
+      read: Grant read-only access to all your data except for the account and user info
+      write: Grant write-only access to all your data except for the account and user info
+      profile: Grant read-only access to the account and user info only
+  Authorization:
+    type: apiKey
+    in: header
+    description: ''
+    name: Bearer Oauth2 Token
+security:
+  - Authorization: []

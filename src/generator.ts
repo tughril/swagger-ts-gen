@@ -6,9 +6,7 @@ import {
   Path,
   Spec,
   Response,
-  Parameter,
-  PathParameter,
-  BodyParameter
+  Parameter
 } from "swagger-schema-official";
 import {
   isBodyParameter,
@@ -16,20 +14,21 @@ import {
   isQueryParameter,
   createOperationName,
   emptySchema,
-  snakeToCamel
+  isModel, 
+  isFormDataParameter, 
+  normalizeNaming 
 } from "./utils";
-import { HTTPMethod, OperationSchema, GenCodeRequest, DefinitionSchema, TSSchema } from "./types";
+import { HTTPMethod, OperationSchema, GenCodeRequest, DefinitionSchema, TSSchema, ProeprtyNaming } from './types';
 import mapTS from "./map-ts";
-import { camelToSnake } from "./utils";
 
 /**
  * Options for TSCodeGenerator
  */
 export interface CodeGenOptions {
   dist: string;
-  definitionDir?: string;
-  operationDir?: string;
-  camelCase?: boolean;
+  modelPropertyNaming: ProeprtyNaming;
+  definitionDir: string;
+  operationDir: string;
   templates?: {
     operation?: string;
     definition?: string;
@@ -47,8 +46,8 @@ export class Generator {
   definitionDir: string;
 
   constructor(private spec: Spec, private options: CodeGenOptions) {
-    this.operationsDir = options.operationDir || "operations";
-    this.definitionDir = options.definitionDir || "definitions";
+    this.operationsDir = options.operationDir;
+    this.definitionDir = options.definitionDir;
   }
 
   generate() {
@@ -67,6 +66,8 @@ export class Generator {
     const operationTmpl =
       templates.operation ||
       fs.readFileSync(path.resolve(__dirname, "../templates/operation.hbs"), "utf-8");
+    const barrelTmpl = 
+      fs.readFileSync(path.resolve(__dirname, "../templates/barrel.hbs"), "utf-8");
 
     // Register partial for handlebars
     this.registerPartial();
@@ -92,7 +93,17 @@ export class Generator {
         Handlebars.compile(definitionTmpl),
         definitionDir
       ),
-      ...this.createOperations(data.operations, Handlebars.compile(operationTmpl), operationDir)
+      this.createDefinitionBarrel(
+        data.definitions,
+        Handlebars.compile(barrelTmpl),
+        definitionDir
+      ),
+      ...this.createOperations(data.operations, Handlebars.compile(operationTmpl), operationDir),
+      this.createOperationBarrel(
+        data.operations,
+        Handlebars.compile(barrelTmpl),
+        operationDir
+      ),
     ]);
   }
 
@@ -100,10 +111,13 @@ export class Generator {
    * Parse swagger this.spec
    */
   parseSpec() {
-    const definitions: DefinitionSchema[] = Object.keys(this.spec.definitions || {}).map(key => {
+    const specDefinitions = this.spec.definitions || {}
+    const definitions: DefinitionSchema[] = Object.keys(specDefinitions)
+    .filter(key => isModel(specDefinitions[key]))
+    .map(key => {
       return {
         name: key,
-        schema: mapTS(this.spec.definitions![key])
+        schema: mapTS(specDefinitions[key])
       };
     });
 
@@ -130,6 +144,7 @@ export class Generator {
           name: createOperationName(operation, path, method),
           path: path,
           method: method,
+          contentType: operation.consumes && operation.consumes[0] || this.spec.consumes && this.spec.consumes[0],
           response: emptySchema()
         };
 
@@ -138,6 +153,7 @@ export class Generator {
         operationSchema.pathParameter = this.parsePathParameter(operation.parameters || []);
         operationSchema.queryParameter = this.parseQueryParameter(operation.parameters || []);
         operationSchema.bodyParameter = this.parseBodyParameter(operation.parameters || []);
+        operationSchema.formDataParameter = this.parseFormDataParameter(operation.parameters || []);
 
         return [...result, operationSchema];
       }, []);
@@ -158,8 +174,13 @@ export class Generator {
   private parseResponse(responses: { [key: string]: Response }): TSSchema {
     // Parse response
     if (responses) {
-      const response = responses["200"] || responses["201"];
-      if (response.schema) {
+      const status = Object.keys(responses)
+        .find((v) => {
+          const status = parseInt(v, 10);
+          return 200 <= status && status < 300;
+        }) || 200;
+      const response = responses[status];
+      if (response && response.schema) {
         return mapTS(response.schema);
       }
     }
@@ -172,7 +193,7 @@ export class Generator {
    */
   private parsePathParameter(parameters: Parameter[]): TSSchema {
     // Parse path parameters
-    return (parameters || []).filter(isPathParameter).reduce((res, v: PathParameter) => {
+    return (parameters || []).filter(isPathParameter).reduce((res, v) => {
       res.properties[v.name] = mapTS(v, v.required);
       return res;
     }, emptySchema());
@@ -185,7 +206,7 @@ export class Generator {
   private parseQueryParameter(parameters: Parameter[]): TSSchema {
     // Parse query parameters
     return (parameters || [])
-      .filter(v => isQueryParameter(v))
+      .filter(isQueryParameter)
       .reduce((res: TSSchema, v) => {
         res.properties[v.name] = mapTS(v, v.required);
         return res;
@@ -199,8 +220,22 @@ export class Generator {
   private parseBodyParameter(parameters: Parameter[]): TSSchema {
     // Parse body parameters
     return (parameters || [])
-      .filter(v => isBodyParameter(v))
-      .map((v: BodyParameter) => mapTS(v.schema!, v.required))[0];
+      .filter(isBodyParameter)
+      .map((v) => mapTS(v.schema!, v.required))[0];
+  }
+
+  /**
+   * Parse form data parameters
+   * @param parameters
+   */
+  private parseFormDataParameter(parameters: Parameter[]): TSSchema {
+    // Parse form data parameters
+    return (parameters || [])
+      .filter(isFormDataParameter)
+      .reduce((res: TSSchema, v) => {
+        res.properties[v.name] = mapTS(v, v.required);
+        return res;
+      }, emptySchema());
   }
 
   /**
@@ -236,6 +271,38 @@ export class Generator {
   }
 
   /**
+   * Create operations request
+   * @param operations
+   * @param template
+   */
+  private createOperationBarrel(
+    operations: OperationSchema[],
+    template: Handlebars.TemplateDelegate,
+    directory: string
+  ): GenCodeRequest {
+    return {
+      filepath: path.resolve(directory, "index.ts"),
+      content: template(operations)
+    };
+  }
+
+  /**
+   * Create operations request
+   * @param operations
+   * @param template
+   */
+  private createDefinitionBarrel(
+    definitions: DefinitionSchema[],
+    template: Handlebars.TemplateDelegate,
+    directory: string
+  ): GenCodeRequest {
+    return {
+      filepath: path.resolve(directory, "index.ts"),
+      content: template(definitions)
+    };
+  }
+
+  /**
    * Create definitions
    * @param definitions
    * @param template
@@ -245,7 +312,8 @@ export class Generator {
     template: Handlebars.TemplateDelegate,
     directory: string
   ) {
-    return definitions.map(v => {
+    return definitions
+    .map(v => {
       return {
         filepath: path.resolve(directory, `${v.name}.ts`),
         content: template(v)
@@ -265,13 +333,7 @@ export class Generator {
    */
   private registerHelper() {
     Handlebars.registerHelper("normalizeCase", (text: string) => {
-      if (this.options.camelCase === true) {
-        return snakeToCamel(text);
-      }
-      if (this.options.camelCase === false) {
-        return camelToSnake(text);
-      }
-      return text;
+      return normalizeNaming(text, this.options.modelPropertyNaming);
     });
     Handlebars.registerHelper("ifEmpty", function(this: any, conditional: any, options: any) {
       if (typeof conditional === "object" && Object.keys(conditional).length === 0) {

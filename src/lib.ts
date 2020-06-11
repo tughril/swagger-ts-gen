@@ -6,4 +6,5 @@ export interface APIRequest<Response> {
   queryParameter?: any;
   path: string;
   method: HTTPMethod;
+  contentType?: string;
 }

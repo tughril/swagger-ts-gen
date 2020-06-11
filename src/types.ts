@@ -3,6 +3,7 @@ export type HTTPMethod = "GET" | "PUT" | "POST" | "DELETE" | "OPTIONS" | "HEAD" 
 export interface TSSchema {
   type: string;
   isRequired: boolean;
+  isNullable: boolean;
   isRef: boolean;
   isArray: boolean;
   enum: any[];
@@ -13,9 +14,11 @@ export interface OperationSchema {
   name: string;
   path: string;
   method: HTTPMethod;
+  contentType?: string;
   pathParameter?: TSSchema;
   queryParameter?: TSSchema;
   bodyParameter?: TSSchema;
+  formDataParameter?: TSSchema;
   response?: TSSchema;
 }
 
@@ -33,6 +36,11 @@ export interface GenCodeRequest {
   filepath: string;
   content: string;
 }
+
+export type ProeprtyNaming = 
+  | "camelCase"
+  | "snake_case"
+  | "original"
 
 export type SwaggerSchemaFormat =
   | "int32"
