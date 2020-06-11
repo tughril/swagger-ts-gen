@@ -73,4 +73,12 @@ namespace {{name}}Request {
     {{/each}}
   }
 {{/ifEmpty}}
+{{#ifEmpty response.properties}}
+{{else}}
+  export interface Response {
+    {{#each response.properties}}
+    {{> property}}
+    {{/each}}
+  }
+{{/ifEmpty}}
 }
