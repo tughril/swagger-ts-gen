@@ -3,7 +3,6 @@ import * as path from "path";
 import Handlebars from "handlebars";
 import {
   Operation,
-  Path,
   Spec,
   Response,
   Parameter
@@ -19,6 +18,7 @@ import {
 } from "./utils";
 import { HTTPMethod, OperationSchema, GenCodeRequest, DefinitionSchema, TSSchema, ProeprtyNaming } from './types';
 import mapTS from "./map-ts";
+import { enumerate, responseName } from './utils';
 
 /**
  * Options for TSCodeGenerator
@@ -81,19 +81,19 @@ export class Generator {
     if (data.operations.length > 0 && !fs.existsSync(operationDir)) {
       fs.mkdirSync(operationDir);
     }
-    if (data.definitions.length > 0 && !fs.existsSync(definitionDir)) {
+    if (data.models.length > 0 && !fs.existsSync(definitionDir)) {
       fs.mkdirSync(definitionDir);
     }
 
     // Create files and write schema
     this.genFiles([
       ...this.createDefinitions(
-        data.definitions,
+        data.models,
         Handlebars.compile(definitionTmpl),
         definitionDir
       ),
       this.createDefinitionBarrel(
-        data.definitions,
+        data.models,
         Handlebars.compile(barrelTmpl),
         definitionDir
       ),
@@ -110,17 +110,26 @@ export class Generator {
    * Parse swagger this.spec
    */
   parseSpec() {
-    const specDefinitions = this.spec.definitions || {}
-    const definitions: DefinitionSchema[] = Object.keys(specDefinitions).map((key) => {
-      return {
+    // Parse models
+    const models: DefinitionSchema[] = [
+      // Parse definitions
+      ...enumerate(this.spec.definitions || {})
+      .map(({ key, value }) => ({
         name: key,
-        schema: mapTS(specDefinitions[key]),
-      };
-    });
+        schema: mapTS(value),
+      })),
+      // Parse reusable responses
+      ...enumerate(this.spec.responses || {})
+      .map(({ key, value }) => ({
+        name: responseName(key),
+        schema: mapTS(value.schema!),
+      }))
+    ];
 
     // Parse operations
-    const operations = Object.keys(this.spec.paths).reduce((result, path) => {
-      let content: Path = this.spec.paths[path];
+    const operations = enumerate(this.spec.paths).reduce((result, { key, value }) => {
+      const content = value;
+      const path = key;
 
       // Remove parameters
       delete content.parameters;
@@ -159,8 +168,8 @@ export class Generator {
     }, [] as OperationSchema[]);
 
     return {
-      operations: operations,
-      definitions: definitions
+      operations,
+      models
     };
   }
 
@@ -177,6 +186,9 @@ export class Generator {
           return 200 <= status && status < 300;
         }) || 200;
       const response = responses[status];
+      if (response && (response as any).$ref) {
+        return mapTS(response);
+      }
       if (response && response.schema) {
         return mapTS(response.schema);
       }
