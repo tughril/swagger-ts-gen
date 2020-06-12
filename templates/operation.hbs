@@ -39,14 +39,16 @@ export class {{name}}Request implements APIRequest<{{#ifEmpty response.propertie
     {{~#ifEmpty pathParameter.properties}}{{else}}, {{/ifEmpty~}}
     public parameter: {{bodyParameter.type}}
     {{~/if~}}
+
     {{~#ifEmpty queryParameter.properties ~}}
     {{~else~}}
     {{~#ifEmpty pathParameter.properties}}{{else}}, {{/ifEmpty~}}
     public parameter: {{name}}Request.Parameter
     {{~/ifEmpty~}}
+
     {{~#ifEmpty formDataParameter.properties ~}}
-    {{~#ifEmpty pathParameter.properties}}{{else}}, {{/ifEmpty~}}
     {{~else~}}
+    {{~#ifEmpty pathParameter.properties}}{{else}}, {{/ifEmpty~}}
     public parameter: {{name}}Request.Parameter
     {{~/ifEmpty~}}
   ) {

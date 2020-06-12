@@ -6,7 +6,7 @@ const spec = require("../examples/petstore.json");
 describe("Generator", () => {
   const generator = new Generator(spec, {
     modelPropertyNaming: "camelCase",
-    definitionDir: "definitions",
+    definitionDir: "models",
     operationDir: "operations",
     dist: "."
   });
@@ -14,12 +14,12 @@ describe("Generator", () => {
   const parsed = generator.parseSpec();
 
   describe("#parseSpec", () => {
-    it("should get one or more definitions", () => {
-      assert(parsed.definitions.length > 0);
+    it("should get one or more models", () => {
+      assert(parsed.models.length > 0);
     });
 
     it("should get Pet as a defintion", () => {
-      const pet = parsed.definitions.filter(v => v.name === "Pet")[0];
+      const pet = parsed.models.filter(v => v.name === "Pet")[0];
       assert.deepEqual(pet.schema, {
         type: "any",
         isRef: false,

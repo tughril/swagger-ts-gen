@@ -13,7 +13,7 @@ commander
   .option("--model-property-naming <type>", "", /^(camelCase|original|snake_case)$/i, "camelCase")
   .option("--dist <path>", "dist directory")
   .option("--operation-dir <path>", "opreations directory", "operations")
-  .option("--definition-dir <path>", "definitions directory", "definitions")
+  .option("--definition-dir <path>", "definitions directory", "models")
   .action((file, options) => {
     try {
       const content = fs.readFileSync(file, "utf-8");

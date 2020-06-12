@@ -55,8 +55,12 @@ export function mapType(type?: SwaggerSchemaType, format?: SwaggerSchemaFormat):
  * @param schema
  */
 export function getRefName(ref: string): string {
-  const seguments = ref.split("/");
-  return seguments[seguments.length - 1];
+  const segments = ref.split("/");
+  const type = segments[1];
+  if (type === "responses") {
+    return responseName(segments[segments.length - 1]);
+  }
+  return segments[segments.length - 1];
 }
 
 /**
@@ -208,4 +212,23 @@ export function camelToSnake(str: string) {
       return group1 + (group2 && "_" + group2);
     })
     .toLowerCase();
+}
+
+/**
+ * enumerate object
+ * @param obj 
+ */
+export function enumerate<T>(obj: Record<string, T>): { key: string, value: T }[] {
+   return Object.keys(obj).map((key) => ({
+     key,
+     value: obj[key]
+   }));
+}
+
+/**
+ * normalize response
+ * @param name 
+ */
+export function responseName(name: string) {
+  return `${name}Response`;
 }
