@@ -71,6 +71,7 @@ describe("utils", () => {
   describe("#createOperationName", () => {
     it("Should create name from operation", () => {
       assert.equal(createOperationName({ operationId: "operationName" } as Operation, "/pets/{petId}", "GET"), "OperationName");
+      assert.equal(createOperationName({ operationId: "operation.Name" } as Operation, "/pets/{petId}", "GET"), "OperationName");
     });
     it("Should create name from path and method", () => {
       assert.equal(createOperationName({} as Operation, "/pets/{petId}", "GET"), "GetPetsPetId");
