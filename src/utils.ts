@@ -146,7 +146,7 @@ export function normalizePath(path: string): string {
  */
 export function createOperationName(operation: Operation, path: string, method: string): string {
   if (operation.operationId) {
-    return toUpperCamelCase(operation.operationId);
+    return toUpperCamelCase(operation.operationId.replace(/\./g, ""));
   }
   return toUpperCamelCase(`${method.toLowerCase()}${normalizePath(path).replace(/\//g, "_").replace(/\{|\}/g, "")}`);
 }
