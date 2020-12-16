@@ -1,1 +1,1 @@
-{{normalizeCase @key}}{{#unless isRequired}}?{{/unless}}: {{type}}{{#if isArray}}[]{{/if}}{{#if isNullable}} | null{{/if}};
+{{normalizeCase @key}}{{#if isNullable}}?{{/if}}: {{type}}{{#if isArray}}[]{{/if}};
