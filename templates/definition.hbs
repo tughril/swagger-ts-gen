@@ -28,7 +28,9 @@ export type {{name}} = {{#each schema.enum}}"{{this}}"{{#unless @last}}|{{/unles
 {{/if}}
 {{#ifEmpty schema.properties}}
 {{#if schema.type}}
+  {{#unless schema.enum}}
 export type {{name}} = {{schema.type}};
+  {{/unless}}
 {{/if}}
 {{else}}
 export interface {{name}} {
