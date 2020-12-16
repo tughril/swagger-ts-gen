@@ -354,6 +354,10 @@ export class Generator {
     Handlebars.registerHelper("definitionDir", () => {
       return this.definitionDir;
     });
+    Handlebars.registerHelper("uniquePropertyRefTypes", (schema: TSSchema) => {
+      const types = Object.values(schema.properties).filter(p => p.isRef).map(p => p.type);
+      return Array.from(new Set(types));
+    });
   }
 
   /**
