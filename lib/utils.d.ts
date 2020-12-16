@@ -1,0 +1,24 @@
+import { BaseSchema, BodyParameter, Operation, Parameter, PathParameter, QueryParameter, Schema as SwaggerSchema, FormDataParameter } from "swagger-schema-official";
+import { TSSchema, SwaggerSchemaType, SwaggerSchemaFormat, ProeprtyNaming } from './types';
+export declare const typeMap: Record<SwaggerSchemaType, string>;
+export declare function mapType(type?: SwaggerSchemaType, format?: SwaggerSchemaFormat): string;
+export declare function getRefName(ref: string): string;
+export declare function isNullable(schema: SwaggerSchema): boolean;
+export declare function isFormDataParameter(parameter: Parameter): parameter is FormDataParameter;
+export declare function isBodyParameter(parameter: Parameter): parameter is BodyParameter;
+export declare function isPathParameter(parameter: Parameter): parameter is PathParameter;
+export declare function isQueryParameter(parameter: Parameter): parameter is QueryParameter;
+export declare function isRequired(schema: SwaggerSchema, key: string): boolean;
+export declare function isSchema(schemaOrBaseSchema: BaseSchema | SwaggerSchema): schemaOrBaseSchema is SwaggerSchema;
+export declare function normalizePath(path: string): string;
+export declare function createOperationName(operation: Operation, path: string, method: string): string;
+export declare function emptySchema(): TSSchema;
+export declare function normalizeNaming(str: string, naming: ProeprtyNaming): string;
+export declare function toUpperCamelCase(str: string): string;
+export declare function snakeToCamel(str: string): string;
+export declare function camelToSnake(str: string): string;
+export declare function enumerate<T>(obj: Record<string, T>): {
+    key: string;
+    value: T;
+}[];
+export declare function responseName(name: string): string;
