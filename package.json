@@ -2,7 +2,7 @@
   "name": "@tughril/swagger-ts-gen",
   "types": "./lib/index",
   "main": "./lib/index",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "The generator for swagger schema",
   "scripts": {
     "clean": "rm -rf ./lib",
