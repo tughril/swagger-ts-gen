@@ -16,23 +16,20 @@
   "bin": {
     "swagger-ts-gen": "bin/swagger-ts-gen.js"
   },
-  "bugs": {
-    "url": "https://github.com/sue71/swagger-ts-gen/issues"
-  },
   "repository": {
     "type": "git",
-    "url": "git://github.com/sue71/swagger-ts-gen.git"
+    "url": "git://github.com/tughril/swagger-ts-gen.git"
   },
   "keywords": [
     "swagger",
     "TypeScript"
   ],
   "author": {
-    "name": "Masaki Sueda",
-    "email": "s.masaki07@gmail.com"
+    "name": "tughril",
+    "email": "morninglory.tug@gmail.com"
   },
   "license": "MIT",
-  "homepage": "https://github.com/sue71/swagger-ts-gen",
+  "homepage": "https://github.com/tughril/swagger-ts-gen",
   "dependencies": {
     "commander": "^5.1.0",
     "handlebars": "^4.7.6"
